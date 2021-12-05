@@ -7,5 +7,4 @@ return [
         '',
     ],
     'threadsNum' => 12,
-    'preThreadBufferSize' => 1,
 ];

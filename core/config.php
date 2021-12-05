@@ -7,4 +7,10 @@ return [
         '',
     ],
     'threadsNum' => 12,
+    'crawlersList' => [
+        'Google',
+        'Bing',
+        'Baidu',
+        'Yandex'
+    ]
 ];

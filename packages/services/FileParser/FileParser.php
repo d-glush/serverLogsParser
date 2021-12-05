@@ -2,23 +2,18 @@
 
 namespace services\FileParser;
 
-use entity\ParserOutput\ParserOutput;
+use ConfigService;
 use entity\ParserOutput\SubParserOutput;
 use InvalidArgumentException;
-use mysql_xdevapi\Exception;
-use services\FileParser\ParsedLog;
 use services\LoggerService\LoggerService;
 
 class FileParser {
-    public static array $crawlersList = [
-        'Google',
-        'Bing',
-        'Baidu',
-        'Yandex',
-    ];
+    public static array $crawlersList = [];
 
     public function __construct()
     {
+        $configService = new ConfigService();
+        $this::$crawlersList = $configService->getCrawlersList();
     }
 
     public function parse(string $fileName, int $startByte, int $endByte): SubParserOutput {

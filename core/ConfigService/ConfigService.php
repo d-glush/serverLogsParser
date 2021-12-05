@@ -23,4 +23,9 @@ Class ConfigService
     {
         return $this->config['preThreadBufferSize'] ?? 1;
     }
+
+    public function getCrawlersList(): array
+    {
+        return $this->config['crawlersList'] ?? [];
+    }
 }

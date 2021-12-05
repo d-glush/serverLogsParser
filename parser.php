@@ -1,6 +1,5 @@
 <?php
 
-use entity\ParserOutput\ParserOutput;
 use entity\ParserOutput\SubParserOutput;
 use services\FileBytesSplitterService\FileBytesSplitterService;
 use services\LoggerService\LoggerService;
@@ -57,3 +56,4 @@ unset($summedResult->uniqueUrls);
 
 $outputService = new OutputService($summedResult);
 echo $outputService->converToJson();
+exit(0);

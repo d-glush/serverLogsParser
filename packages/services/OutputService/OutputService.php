@@ -7,7 +7,7 @@ use entity\ParserOutput\ParserOutput;
 class OutputService {
     private ParserOutput $outputData;
 
-    public function __construct($outputData)
+    public function __construct(ParserOutput $outputData)
     {
         $this->outputData = $outputData;
     }

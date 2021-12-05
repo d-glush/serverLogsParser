@@ -37,6 +37,7 @@ while (!$threadService->isAllThreadsDone()) {
 
 //вытаскиваем результаты
 $results = $threadService->getThreadsOutput();
+var_dump($results);
 
 //суммируем результаты
 

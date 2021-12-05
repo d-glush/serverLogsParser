@@ -50,7 +50,6 @@ class ThreadService {
         $threadsOutputs = [];
         foreach ($this->threadsProc as $threadId => $threadProc) {
             $threadsOutputs[$threadId] = stream_get_contents($this->threadsProcPipes[$threadId][1]);
-            var_dump($threadsOutputs[$threadId]);
         }
         return $threadsOutputs;
     }

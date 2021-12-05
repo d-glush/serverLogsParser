@@ -6,6 +6,6 @@ return [
         'core',
         '',
     ],
-    'threadsNum' => 5,
+    'threadsNum' => 1,
     'preThreadBufferSize' => 1,
 ];

@@ -1,12 +1,25 @@
 <?php
 
-$fStream = fopen('testFiles/testFile2Strings.log', 'r');
+function parseString(string $string): array {
+    $preg = '/(.*) - - \[(.*)\] "(.*)" (\d+) (\d+) "(.*)" "(.*)"/u';
+    preg_match($preg, $string, $matches);
+    array_shift($matches);
+    return $matches;
+}
 
-//$string = fgets($fStream);
-$char = fgetc($fStream);
-$char = fgetc($fStream);
-$pos = ftell($fStream);
+$fStream = fopen('testFiles/testFile10GB.log', 'r');
 
-//var_dump($string);
-var_dump($char);
-var_dump($pos);
+$offset = 0;
+$length = 10000000;
+while($offset < stat('testFiles/testFile10GB.log')['size']){
+    file_get_contents(
+        'testFiles/testFile10GB.log',
+        false,
+        null,
+        $offset,
+        $length,
+    );
+    $offset+=$length;
+}
+
+fclose($fStream);

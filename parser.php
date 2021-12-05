@@ -3,6 +3,7 @@
 use entity\ParserOutput\ParserOutput;
 use entity\ParserOutput\SubParserOutput;
 use services\FileBytesSplitterService\FileBytesSplitterService;
+use services\LoggerService\LoggerService;
 use services\OutputService\OutputService;
 use services\InputService\InputService;
 use services\ThreadService\ThreadService;
@@ -12,8 +13,12 @@ require_once 'core/init.php';
 $inputService = new InputService();
 $configService = new ConfigService();
 $logFileName = $inputService->getLogFileName();
+if (!file_exists($logFileName)) {
+    echo 'Input file not exists!';
+    exit(1);
+}
 $threadsNum = $configService->getThreadsNum();
-$perThreadBufferSize = $configService->perThreadBufferSize();
+LoggerService::log("START for $logFileName with $threadsNum threads");
 
 //делим файл на участки для потоков
 $fileSplitterService = new FileBytesSplitterService($threadsNum);
@@ -26,6 +31,7 @@ foreach ($threadsRanges as $threadRange) {
     $currThreadStartByte = $threadRange->getStartByte();
     $command = "php -f .\subProc.php $logFileName $currThreadStartByte $currThreadEndByte";
     $threadService->addCommandThread($command);
+    LoggerService::log("THREAD INIT $command");
 }
 
 //запускаем потоки
@@ -41,6 +47,7 @@ $results = $threadService->getThreadsOutput();
 //суммируем результаты
 $summedResult = new SubParserOutput();
 foreach ($results as $resultJson) {
+    LoggerService::log("RESULT GETTED --- $resultJson");
     $curResult = new SubParserOutput();
     $curResult->setDataByJson($resultJson);
     $summedResult->add($curResult);

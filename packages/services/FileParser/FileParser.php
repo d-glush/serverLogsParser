@@ -4,7 +4,10 @@ namespace services\FileParser;
 
 use entity\ParserOutput\ParserOutput;
 use entity\ParserOutput\SubParserOutput;
+use InvalidArgumentException;
+use mysql_xdevapi\Exception;
 use services\FileParser\ParsedLog;
+use services\LoggerService\LoggerService;
 
 class FileParser {
     public static array $crawlersList = [
@@ -29,7 +32,12 @@ class FileParser {
         $statusCodes = [];
 
         while ((ftell($fStream) < $endByte) && ($bufferString = fgets($fStream))) {
-            $parsedLog = $this->parseLog($bufferString);
+            try {
+                $parsedLog = $this->parseLog($bufferString);
+            } catch (InvalidArgumentException $e) {
+                LoggerService::log(" !!!!! PARSE ERROR --- $bufferString");
+                continue;
+            }
             $views++;
             $uniqueUrls[$parsedLog->getUrl()] = true;
             if ($parsedLog->getResponseCode() !== 301) {
@@ -60,6 +68,17 @@ class FileParser {
         $preg = '/(.*) - - \[(.*)\] "(.*)" (\d+) (\d+) "(.*)" "(.*)"/u';
         preg_match($preg, $logString, $matches);
 
+        if (!isset(
+            $matches[1],
+            $matches[2],
+            $matches[3],
+            $matches[4],
+            $matches[5],
+            $matches[6],
+            $matches[7]
+        )) {
+            throw new InvalidArgumentException();
+        }
         $ip = $matches[1];
         $methodData = $matches[3];
         $responseCode = (int)$matches[4];

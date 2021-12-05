@@ -94,7 +94,7 @@ class ParsedLog {
 
     public function getUrl(): string
     {
-        $preg = '/\/[^? ]+/u';
+        $preg = '/\/[^ ]+/u';
         preg_match($preg, $this->methodData, $matches);
         return $matches[0];
     }

@@ -3,6 +3,7 @@
 namespace services\FileParser;
 
 use entity\ParserOutput\ParserOutput;
+use entity\ParserOutput\SubParserOutput;
 use services\FileParser\ParsedLog;
 
 class FileParser {
@@ -17,21 +18,23 @@ class FileParser {
     {
     }
 
-    public function parse(string $fileName, int $startByte, int $endByte): ParserOutput {
-        $result = new ParserOutput();
+    public function parse(string $fileName, int $startByte, int $endByte): SubParserOutput {
+        $result = new SubParserOutput();
         $fStream = fopen($fileName, 'r');
-
+        fseek($fStream, $startByte);
         $views = 0;
-        $visitedUrls = [];
+        $uniqueUrls = [];
         $traffic = 0;
         $crawlers = array_fill_keys(FileParser::$crawlersList, 0);
         $statusCodes = [];
 
-        while ($bufferString = fgets($fStream)) {
+        while ((ftell($fStream) < $endByte) && ($bufferString = fgets($fStream))) {
             $parsedLog = $this->parseLog($bufferString);
             $views++;
-            $visitedUrls[$parsedLog->getUrl()] = true;
-            $traffic += $parsedLog->getResponseSize();
+            $uniqueUrls[$parsedLog->getUrl()] = true;
+            if ($parsedLog->getResponseCode() !== 301) {
+                $traffic += $parsedLog->getResponseSize();
+            }
             if ($parsedLog->isCrawler()) {
                 $crawler = $parsedLog->getCrawler();
                 $crawlers[$crawler]++;
@@ -41,14 +44,14 @@ class FileParser {
             } else {
                 $statusCodes[$parsedLog->getResponseCode()] = 1;
             }
-
         }
 
         $result->setViews($views)
-            ->setUrls(count($visitedUrls))
+            ->setUrls(count($uniqueUrls))
             ->setTraffic($traffic)
             ->setCrawlers($crawlers)
-            ->setStatusCodes($statusCodes);
+            ->setStatusCodes($statusCodes)
+            ->setUniqueUrls($uniqueUrls);
         return $result;
     }
 

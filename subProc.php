@@ -13,4 +13,4 @@ $fileParser = new FileParser();
 $result = $fileParser->parse($fileName, $startByte, $endByte);
 
 $outputService = new OutputService($result);
-echo $outputService->getResponse();
+echo $outputService->converToJson();

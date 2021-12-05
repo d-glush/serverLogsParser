@@ -12,7 +12,7 @@ class OutputService {
         $this->outputData = $outputData;
     }
 
-    public function getResponse(): string {
+    public function converToJson(): string {
         return $this->convertDataToJson();
     }
 

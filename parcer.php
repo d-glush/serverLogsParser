@@ -1,6 +1,7 @@
 <?php
 
 use entity\ParserOutput\ParserOutput;
+use entity\ParserOutput\SubParserOutput;
 use services\FileBytesSplitterService\FileBytesSplitterService;
 use services\OutputService\OutputService;
 use services\InputService\InputService;
@@ -17,7 +18,6 @@ $perThreadBufferSize = $configService->perThreadBufferSize();
 //делим файл на участки для потоков
 $fileSplitterService = new FileBytesSplitterService($threadsNum);
 $threadsRanges = $fileSplitterService->splitFile($logFileName);
-//var_dump($threadsRanges);
 
 //обрабатываем участки потоками
 $threadService = new ThreadService($threadsNum);
@@ -37,17 +37,16 @@ while (!$threadService->isAllThreadsDone()) {
 
 //вытаскиваем результаты
 $results = $threadService->getThreadsOutput();
-var_dump($results);
 
 //суммируем результаты
+$summedResult = new SubParserOutput();
+foreach ($results as $resultJson) {
+    $curResult = new SubParserOutput();
+    $curResult->setDataByJson($resultJson);
+    $summedResult->add($curResult);
+}
 
+unset($summedResult->uniqueUrls);
 
-//$result = new ParserOutput();
-//$result->setCrawlers(["Google" => 123, "Yandex" => 33]);
-//$result->setStatusCodes(["200" => 2, "303" => 4, "404" => 1]);
-//$result->setTraffic(10000);
-//$result->setUrls(300);
-//$result->setViews(4124);
-//
-//$outputService = new OutputService($result);
-//echo $outputService->getResponse();
+$outputService = new OutputService($summedResult);
+echo $outputService->converToJson();

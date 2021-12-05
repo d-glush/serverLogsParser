@@ -9,7 +9,6 @@ spl_autoload_register(function ($class_name) {
     $priorities = $configService->getAutoloaderPriorities();
 
     foreach ($priorities as $folder) {
-        var_dump($folder . $classPath);
         if (is_readable($folder . $classPath)) {
             include $folder . $classPath;
             break;

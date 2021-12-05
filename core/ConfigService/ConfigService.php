@@ -14,13 +14,13 @@ Class ConfigService
         return $this->config['autoloaderPriorities'];
     }
 
-    public function getGameComplexities(): array
+    public function getThreadsNum(): int
     {
-        return $this->config['gameComplexities'];
+        return $this->config['threadsNum'] ?? 1;
     }
 
-    public function getLogsPaths(): array
+    public function perThreadBufferSize(): int
     {
-        return $this->config['logs'];
+        return $this->config['preThreadBufferSize'] ?? 1;
     }
 }
